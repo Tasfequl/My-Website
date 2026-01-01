@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Meal Manager | Professional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background: #05070a; color: #f8fafc; margin: 0; padding: 0; }
+        .glass-morphism { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .input-style { background: #0f172a; border: 1px solid #1e293b; transition: 0.3s; width: 100%; box-sizing: border-box; color: white; }
+        input[type="date"] { display: block; appearance: none; -webkit-appearance: none; min-height: 58px; }
+        .input-style:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); outline: none; }
+        .btn-premium { background: linear-gradient(135deg, #0ea5e9, #6366f1); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.2); }
+        .hidden { display: none; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-10">
+
+    <div id="authSection" class="w-full max-w-md glass-morphism p-8 rounded-3xl shadow-2xl border border-sky-500/20">
+        <h2 class="text-3xl font-extrabold text-center mb-6 text-sky-400">Login</h2>
+        <div class="space-y-4">
+            <input type="text" id="authName" class="w-full p-4 rounded-xl input-style" placeholder="Member Name">
+            <input type="password" id="authPass" class="w-full p-4 rounded-xl input-style" placeholder="Password">
+            <button onclick="handleAuth()" class="w-full btn-premium py-4 rounded-xl font-bold text-lg">Login to Dashboard</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="w-full max-w-5xl hidden">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-4xl font-black">Welcome, <span id="displayUser" class="text-sky-400">User</span>!</h1>
+                <p id="currentMonthDisplay" class="text-slate-500 font-medium"></p>
+            </div>
+            <div class="flex gap-4">
+                <div class="glass-morphism px-8 py-4 rounded-2xl text-center border-b-2 border-sky-500">
+                    <p class="text-[10px] uppercase font-bold text-slate-500">Total Meal</p>
+                    <p id="totalMeal" class="text-3xl font-black text-sky-400">0</p>
+                </div>
+                <div class="glass-morphism px-8 py-4 rounded-2xl text-center border-b-2 border-emerald-500">
+                    <p class="text-[10px] uppercase font-bold text-slate-500">Total Cost</p>
+                    <p class="text-3xl font-black text-emerald-400">৳<span id="totalCost">0</span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="tapMeal('lunch')" class="glass-morphism p-12 rounded-3xl hover:bg-sky-500/10 transition text-center group">
+                        <span class="block text-4xl mb-2 group-hover:scale-110 transition">☀️</span>
+                        <span class="text-xl font-bold">Lunch</span>
+                    </button>
+                    <button onclick="tapMeal('dinner')" class="glass-morphism p-12 rounded-3xl hover:bg-indigo-500/10 transition text-center group">
+                        <span class="block text-4xl mb-2 group-hover:scale-110 transition">🌙</span>
+                        <span class="text-xl font-bold">Dinner</span>
+                    </button>
+                </div>
+
+                <div class="glass-morphism p-6 rounded-3xl border border-sky-500/10">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase mb-4 tracking-widest">Monthly Status</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-slate-900/40 p-3 rounded-xl text-center">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Lunch</p>
+                            <p id="repLunch" class="text-xl font-bold text-sky-400">0</p>
+                        </div>
+                        <div class="bg-slate-900/40 p-3 rounded-xl text-center">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Dinner</p>
+                            <p id="repDinner" class="text-xl font-bold text-indigo-400">0</p>
+                        </div>
+                        <div class="bg-slate-900/40 p-3 rounded-xl text-center">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Market</p>
+                            <p id="repCost" class="text-xl font-bold text-emerald-400">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="resetData()" class="w-full py-3 glass-morphism rounded-xl text-slate-500 hover:text-red-500 text-xs font-bold uppercase tracking-widest transition">Manual Reset</button>
+            </div>
+
+            <div class="glass-morphism p-6 rounded-3xl h-full">
+                <h3 class="text-xl font-bold mb-6 text-sky-400">Add Market Item</h3>
+                <div class="space-y-4">
+                    <input type="text" id="itemName" class="w-full p-4 rounded-xl input-style" placeholder="Item Name">
+                    <input type="number" id="itemPrice" class="w-full p-4 rounded-xl input-style" placeholder="Price (৳)">
+                    <input type="date" id="itemDate" class="w-full p-4 rounded-xl input-style">
+                    <button onclick="addItem()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-4 rounded-xl font-bold shadow-lg transition shadow-emerald-900/20">Confirm Purchase</button>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 glass-morphism p-6 rounded-3xl overflow-hidden mt-4">
+                <h3 class="text-sm font-bold text-slate-500 uppercase mb-6 tracking-widest">Market History</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="text-slate-500 border-b border-slate-800">
+                            <tr>
+                                <th class="pb-4 font-semibold">Product Name</th>
+                                <th class="pb-4 font-semibold">Date</th>
+                                <th class="pb-4 text-right font-semibold">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemTable" class="divide-y divide-slate-800/50"></tbody>
+                    </table>
+                    <div id="emptyMsg" class="text-center py-10 text-slate-600 italic">No records found this month.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database logic
+        let db = {
+            lunch: 0,
+            dinner: 0,
+            totalCost: 0,
+            history: [],
+            monthYear: "" // Format: "M-YYYY"
+        };
+
+        const members = { "Mahin": "mahin", "Jahed": "jahed", "Moinul": "moinul", "Raj": "raj", "Arif": "arif" };
+
+        window.onload = () => {
+            const saved = localStorage.getItem('elite_db');
+            const now = new Date();
+            const currentMonthID = now.getMonth() + "-" + now.getFullYear();
+
+            if (saved) {
+                db = JSON.parse(saved);
+                // Auto Reset Check
+                if (db.monthYear !== currentMonthID) {
+                    db = { lunch: 0, dinner: 0, totalCost: 0, history: [], monthYear: currentMonthID };
+                    save();
+                }
+            } else {
+                db.monthYear = currentMonthID;
+            }
+            
+            updateUI();
+            document.getElementById('currentMonthDisplay').innerText = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        };
+
+        function handleAuth() {
+            const n = document.getElementById('authName').value.trim();
+            const p = document.getElementById('authPass').value.trim();
+            if (members[n] && members[n] === p) {
+                document.getElementById('displayUser').innerText = n;
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            } else { alert("Wrong credentials!"); }
+        }
+
+        function tapMeal(type) {
+            if (type === 'lunch') db.lunch++;
+            else db.dinner++;
+            save();
+            updateUI();
+        }
+
+        function addItem() {
+            const name = document.getElementById('itemName').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const date = document.getElementById('itemDate').value;
+            if (!name || isNaN(price) || !date) return alert("Fill all fields");
+
+            db.totalCost += price;
+            db.history.unshift({ name, price, date });
+            save();
+            updateUI();
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+        }
+
+        function save() { localStorage.setItem('elite_db', JSON.stringify(db)); }
+
+        function updateUI() {
+            document.getElementById('totalMeal').innerText = db.lunch + db.dinner;
+            document.getElementById('totalCost').innerText = db.totalCost;
+            document.getElementById('repLunch').innerText = db.lunch;
+            document.getElementById('repDinner').innerText = db.dinner;
+            document.getElementById('repCost').innerText = "৳" + db.totalCost;
+
+            const table = document.getElementById('itemTable');
+            table.innerHTML = '';
+            db.history.forEach(item => {
+                table.innerHTML += `<tr class="hover:bg-slate-800/20"><td class="py-4 font-medium">${item.name}</td><td class="py-4 text-slate-400 text-sm">${item.date}</td><td class="py-4 text-right text-emerald-400 font-bold">৳${item.price}</td></tr>`;
+            });
+            document.getElementById('emptyMsg').style.display = db.history.length ? 'none' : 'block';
+        }
+
+        function resetData() {
+            if (confirm("Reset database?")) {
+                localStorage.removeItem('elite_db');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
